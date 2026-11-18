@@ -1,8 +1,61 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@using System.Globalization
+@{
+    ViewData["Title"] = "Inicio";
+
+    var esAdministrador = User.IsInRole("Administrador");
+    var hoy = DateTime.Now.ToString("dddd d 'de' MMMM", new CultureInfo("es-CR"));
+
+    var clinicos = new List<(string Titulo, string Descripcion, string Icono, string Controlador)>
+    {
+        ("Veterinaria", "Busque una mascota y abra su expediente: vacunas, tratamientos, exámenes y notas.", "bi-clipboard2-pulse", "Veterinaria"),
+        ("Mascotas", "Registre una mascota nueva o actualice sus datos y su dueño.", "bi-heart", "Mascotas")
+    };
+
+    var administracion = new List<(string Titulo, string Descripcion, string Icono, string Controlador)>
+    {
+        ("Especies y razas", "Las especies que atiende la clínica y las razas de cada una.", "bi-tags", "Especies"),
+        ("Catálogo clínico", "Medicamentos y tratamientos que se pueden asignar.", "bi-capsule", "Catalogo"),
+        ("Veterinarios", "Datos, número de colegiado y fotografía de cada veterinario.", "bi-person-badge", "Veterinarios"),
+        ("Usuarios", "Cuentas de acceso, perfiles y bloqueos.", "bi-people", "Usuarios")
+    };
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<header class="inicio-saludo">
+    <h1>Hola, @User.Identity!.Name</h1>
+    <p>Hoy es @hoy.</p>
+</header>
+
+<section class="inicio-seccion" aria-labelledby="titulo-clinica">
+    <h2 id="titulo-clinica" class="inicio-titulo">Atención clínica</h2>
+    <div class="accesos-clinicos">
+        @foreach (var acceso in clinicos)
+        {
+            <a class="acceso-clinico" asp-controller="@acceso.Controlador" asp-action="Index">
+                <i class="bi @acceso.Icono" aria-hidden="true"></i>
+                <span class="acceso-nombre">@acceso.Titulo</span>
+                <span class="acceso-detalle">@acceso.Descripcion</span>
+            </a>
+        }
+    </div>
+</section>
+
+@if (esAdministrador)
+{
+    <section class="inicio-seccion" aria-labelledby="titulo-administracion">
+        <h2 id="titulo-administracion" class="inicio-titulo">Administración</h2>
+        <ul class="accesos-administracion">
+            @foreach (var acceso in administracion)
+            {
+                <li>
+                    <a class="acceso-administrativo" asp-controller="@acceso.Controlador" asp-action="Index">
+                        <i class="bi @acceso.Icono" aria-hidden="true"></i>
+                        <span>
+                            <span class="acceso-nombre">@acceso.Titulo</span>
+                            <span class="acceso-detalle">@acceso.Descripcion</span>
+                        </span>
+                    </a>
+                </li>
+            }
+        </ul>
+    </section>
+}

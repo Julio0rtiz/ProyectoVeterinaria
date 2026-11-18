@@ -10,4 +10,7 @@ public class Especie
     [Required(ErrorMessage = "El nombre es obligatorio.")]
     [MaxLength(50, ErrorMessage = "El nombre no puede superar 50 caracteres.")]
     public string Nombre { get; set; } = "";
+
+    public ICollection<Raza> Razas { get; set; } = new List<Raza>();
+    public ICollection<Mascota> Mascotas { get; set; } = new List<Mascota>();
 }

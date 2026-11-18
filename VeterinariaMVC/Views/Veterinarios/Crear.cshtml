@@ -1,0 +1,45 @@
+@model VeterinariaMVC.Models.ViewModels.VeterinarioFormViewModel
+@{
+    ViewData["Title"] = "Nuevo veterinario";
+}
+
+<div class="mb-4">
+    <h1 class="h2 mb-1">Nuevo veterinario</h1>
+    <p class="text-secondary mb-0">Registre los datos profesionales y la fotografía del veterinario.</p>
+</div>
+
+<div class="card p-4" style="max-width: 36rem;">
+    <form asp-action="Crear" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="mb-3">
+            <label asp-for="NombreCompleto" class="form-label"></label>
+            <input asp-for="NombreCompleto" class="form-control" maxlength="100" autofocus />
+            <span asp-validation-for="NombreCompleto" class="text-danger small"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="NumeroColegiado" class="form-label"></label>
+            <input asp-for="NumeroColegiado" class="form-control" maxlength="20" />
+            <span asp-validation-for="NumeroColegiado" class="text-danger small"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Foto" class="form-label"></label>
+            <input asp-for="Foto" type="file" class="form-control" accept=".jpg,.jpeg,.png,image/jpeg,image/png" />
+            <div class="form-text">Opcional. Formatos permitidos: JPG o PNG (máximo 5 MB).</div>
+            <span asp-validation-for="Foto" class="text-danger small"></span>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-check-lg" aria-hidden="true"></i> Guardar
+            </button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

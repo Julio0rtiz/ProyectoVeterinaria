@@ -34,21 +34,13 @@ ProyectoVeterinaria/
 
 ### Ejecutar la aplicación web
 1. Revisar la cadena de conexión `Default` en `VeterinariaMVC/appsettings.json`.
-2. Configurar la clave JWT (no se sube al repositorio):
-   ```
-   cd VeterinariaMVC
-   dotnet user-secrets init
-   dotnet user-secrets set "Jwt:Key" "<clave de al menos 32 caracteres>"
-   ```
-3. Crear la base de datos:
-   ```
-   dotnet ef database update
-   ```
-4. Ejecutar:
+2. Ejecutar desde la carpeta `VeterinariaMVC`:
    ```
    dotnet run
    ```
-   Al iniciar se crean automáticamente los usuarios de prueba.
+   Al iniciar se aplican las migraciones y se crean automáticamente los usuarios de prueba.
+
+La clave JWT de desarrollo está en `appsettings.Development.json`. En el servidor publicado se configura una clave distinta en `Jwt:Key`.
 
 ## Usuarios de prueba
 

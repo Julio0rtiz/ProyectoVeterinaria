@@ -39,4 +39,9 @@ public class Mascota
 
     [Display(Name = "Última atención")]
     public DateTime? UltimaAtencion { get; set; }
+
+    public ICollection<Vacuna> Vacunas { get; set; } = new List<Vacuna>();
+    public ICollection<TratamientoAsignado> Tratamientos { get; set; } = new List<TratamientoAsignado>();
+    public ICollection<Examen> Examenes { get; set; } = new List<Examen>();
+    public ICollection<NotaHistorial> Notas { get; set; } = new List<NotaHistorial>();
 }

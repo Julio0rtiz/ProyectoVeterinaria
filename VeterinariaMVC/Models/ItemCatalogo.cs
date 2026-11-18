@@ -18,4 +18,6 @@ public class ItemCatalogo
     [MaxLength(500, ErrorMessage = "La descripción no puede superar 500 caracteres.")]
     [Display(Name = "Descripción")]
     public string Descripcion { get; set; } = "";
+
+    public ICollection<TratamientoAsignado> Asignaciones { get; set; } = new List<TratamientoAsignado>();
 }

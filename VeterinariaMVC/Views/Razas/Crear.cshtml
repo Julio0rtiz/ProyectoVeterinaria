@@ -1,0 +1,41 @@
+@model VeterinariaMVC.Models.Raza
+@{
+    ViewData["Title"] = "Nueva raza";
+}
+
+<div class="mb-4">
+    <h1 class="h2 mb-1">Nueva raza</h1>
+    <p class="text-secondary mb-0">Registre una nueva raza vinculada a una especie.</p>
+</div>
+
+<div class="card p-4" style="max-width: 34rem;">
+    <form asp-action="Crear" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="mb-3">
+            <label asp-for="EspecieId" class="form-label"></label>
+            <select asp-for="EspecieId" asp-items="ViewBag.Especies" class="form-select">
+                <option value="0">Seleccione una especie...</option>
+            </select>
+            <span asp-validation-for="EspecieId" class="text-danger small"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Nombre" class="form-label"></label>
+            <input asp-for="Nombre" class="form-control" maxlength="50" />
+            <span asp-validation-for="Nombre" class="text-danger small"></span>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-check-lg" aria-hidden="true"></i> Guardar
+            </button>
+            <a asp-action="Index" asp-route-especieId="@(Model.EspecieId > 0 ? Model.EspecieId : null)"
+               class="btn btn-outline-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

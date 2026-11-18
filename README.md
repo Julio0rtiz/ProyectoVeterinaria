@@ -83,16 +83,18 @@ TempData["Error"] = "No se puede eliminar la especie porque tiene razas asociada
 | Mascotas y expediente | `[Authorize(Roles = "Administrador,Veterinario")]` |
 | API para dueños | `[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Dueno")]` |
 
+**Acciones de los controladores:** `Index(string? q)` para la lista con buscador, `Crear` (GET y POST), `Editar` (GET y POST) y `Eliminar` (solo POST). Nunca se elimina con un enlace GET.
+
 **Pantalla de listado:** título, botón «Agregar», barra de búsqueda y la tabla dentro de una tarjeta, con las acciones como botones de ícono a la derecha.
 ```html
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
     <h1 class="h3 mb-0">Especies</h1>
-    <a asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Agregar especie</a>
+    <a asp-action="Crear" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Agregar especie</a>
 </div>
 
 <form asp-action="Index" method="get" class="mb-3" role="search">
     <div class="input-group">
-        <input type="search" name="buscar" value="@ViewData["Buscar"]" class="form-control" placeholder="Buscar por nombre" aria-label="Buscar por nombre" />
+        <input type="search" name="q" value="@ViewBag.Q" class="form-control" placeholder="Buscar por nombre" aria-label="Buscar por nombre" />
         <button type="submit" class="btn btn-outline-primary"><i class="bi bi-search"></i> Buscar</button>
     </div>
 </form>
@@ -107,8 +109,10 @@ TempData["Error"] = "No se puede eliminar la especie porque tiene razas asociada
                 <tr>
                     <td>Perro</td>
                     <td class="text-end">
-                        <a asp-action="Edit" asp-route-id="1" class="btn btn-sm btn-outline-primary" title="Editar" aria-label="Editar Perro"><i class="bi bi-pencil"></i></a>
-                        <a asp-action="Delete" asp-route-id="1" class="btn btn-sm btn-outline-danger" title="Eliminar" aria-label="Eliminar Perro"><i class="bi bi-trash"></i></a>
+                        <a asp-action="Editar" asp-route-id="1" class="btn btn-sm btn-outline-primary" title="Editar" aria-label="Editar Perro"><i class="bi bi-pencil"></i></a>
+                        <form asp-action="Eliminar" asp-route-id="1" method="post" class="d-inline" onsubmit="return confirm('¿Eliminar esta especie?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar" aria-label="Eliminar Perro"><i class="bi bi-trash"></i></button>
+                        </form>
                     </td>
                 </tr>
             </tbody>
@@ -124,7 +128,7 @@ TempData["Error"] = "No se puede eliminar la especie porque tiene razas asociada
         <h1 class="h3 mb-4">Agregar especie</h1>
         <div class="card">
             <div class="card-body p-4">
-                <form asp-action="Create" method="post">
+                <form asp-action="Crear" method="post">
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
                     <div class="mb-3">
                         <label asp-for="Nombre" class="form-label"></label>

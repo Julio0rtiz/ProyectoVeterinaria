@@ -5,6 +5,7 @@
     var perfil = ViewBag.Perfil as Perfil?;
     var bloqueado = ViewBag.Bloqueado as bool?;
     var q = ViewBag.Q as string;
+    var usuarioActualId = ViewBag.UsuarioActualId is int id ? id : 0;
 }
 
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
@@ -97,6 +98,7 @@ else
                 <tbody>
                     @foreach (var item in Model)
                     {
+                        var esUsuarioActual = item.Id == usuarioActualId;
                         <tr>
                             <td>@item.Cedula</td>
                             <td>
@@ -134,7 +136,23 @@ else
                                     <span class="badge text-bg-success">Activo</span>
                                 }
                             </td>
-                            <td class="text-end text-nowrap"></td>
+                            <td class="text-end text-nowrap">
+                                <a class="btn btn-sm btn-outline-secondary" asp-action="Editar" asp-route-id="@item.Id"
+                                   title="Editar" aria-label="Editar @item.Nombre">
+                                    <i class="bi bi-pencil" aria-hidden="true"></i>
+                                </a>
+
+                                @if (!esUsuarioActual)
+                                {
+                                    <form asp-action="Eliminar" asp-route-id="@item.Id" method="post" class="d-inline"
+                                          onsubmit="return confirm('¿Eliminar este usuario?');">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar"
+                                                aria-label="Eliminar @item.Nombre">
+                                            <i class="bi bi-trash" aria-hidden="true"></i>
+                                        </button>
+                                    </form>
+                                }
+                            </td>
                         </tr>
                     }
                 </tbody>

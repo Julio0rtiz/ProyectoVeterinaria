@@ -138,6 +138,148 @@ public class UsuariosController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    public async Task<IActionResult> Editar(int id)
+    {
+        var usuario = await _context.Usuarios.FindAsync(id);
+        if (usuario is null)
+        {
+            return NotFound();
+        }
+
+        var usuarioViewModel = new UsuarioFormViewModel
+        {
+            Id = usuario.Id,
+            Cedula = usuario.Cedula,
+            Nombre = usuario.Nombre,
+            Correo = usuario.Correo,
+            Perfil = usuario.Perfil,
+            VeterinarioId = usuario.VeterinarioId
+        };
+
+        await CargarVeterinariosDisponiblesAsync(usuario.VeterinarioId, usuario.Id);
+        return View(usuarioViewModel);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Editar(int id, UsuarioFormViewModel usuarioViewModel)
+    {
+        if (id != usuarioViewModel.Id)
+        {
+            return BadRequest();
+        }
+
+        var existente = await _context.Usuarios.FindAsync(id);
+        if (existente is null)
+        {
+            return NotFound();
+        }
+
+        usuarioViewModel.Cedula = (usuarioViewModel.Cedula ?? "").Trim();
+        usuarioViewModel.Nombre = (usuarioViewModel.Nombre ?? "").Trim();
+        usuarioViewModel.Correo = (usuarioViewModel.Correo ?? "").Trim();
+
+        if (!Enum.IsDefined(typeof(Perfil), usuarioViewModel.Perfil))
+        {
+            ModelState.AddModelError(nameof(usuarioViewModel.Perfil), "Seleccione un perfil válido.");
+        }
+
+        if (await _context.Usuarios.AnyAsync(u => u.Cedula == usuarioViewModel.Cedula && u.Id != id))
+        {
+            ModelState.AddModelError(nameof(usuarioViewModel.Cedula), "Ya existe un usuario con esa cédula.");
+        }
+
+        if (await _context.Usuarios.AnyAsync(u => u.Correo == usuarioViewModel.Correo && u.Id != id))
+        {
+            ModelState.AddModelError(nameof(usuarioViewModel.Correo), "Ya existe un usuario con ese correo electrónico.");
+        }
+
+        if (usuarioViewModel.Perfil == Perfil.Veterinario)
+        {
+            if (!usuarioViewModel.VeterinarioId.HasValue || usuarioViewModel.VeterinarioId.Value <= 0)
+            {
+                ModelState.AddModelError(nameof(usuarioViewModel.VeterinarioId), "Debe seleccionar el veterinario vinculado.");
+            }
+            else if (!await _context.Veterinarios.AnyAsync(v => v.Id == usuarioViewModel.VeterinarioId.Value))
+            {
+                ModelState.AddModelError(nameof(usuarioViewModel.VeterinarioId), "Seleccione un veterinario válido.");
+            }
+            else if (await _context.Usuarios.AnyAsync(u => u.VeterinarioId == usuarioViewModel.VeterinarioId.Value && u.Id != id))
+            {
+                ModelState.AddModelError(nameof(usuarioViewModel.VeterinarioId), "El veterinario seleccionado ya tiene un usuario vinculado.");
+            }
+        }
+        else
+        {
+            usuarioViewModel.VeterinarioId = null;
+        }
+
+        if (!ModelState.IsValid)
+        {
+            await CargarVeterinariosDisponiblesAsync(usuarioViewModel.VeterinarioId, id);
+            return View(usuarioViewModel);
+        }
+
+        existente.Cedula = usuarioViewModel.Cedula;
+        existente.Nombre = usuarioViewModel.Nombre;
+        existente.Correo = usuarioViewModel.Correo;
+        existente.Perfil = usuarioViewModel.Perfil;
+        existente.VeterinarioId = usuarioViewModel.Perfil == Perfil.Veterinario ? usuarioViewModel.VeterinarioId : null;
+
+        if (!string.IsNullOrWhiteSpace(usuarioViewModel.Contrasena))
+        {
+            existente.ContrasenaHash = _hasher.HashPassword(existente, usuarioViewModel.Contrasena);
+        }
+
+        await _context.SaveChangesAsync();
+
+        TempData["Exito"] = "Usuario actualizado.";
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Eliminar(int id)
+    {
+        if (id == ObtenerUsuarioActualId())
+        {
+            TempData["Error"] = "No puede eliminar su propia cuenta.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        var esAutor = await _context.Vacunas.AnyAsync(v => v.AutorId == id)
+            || await _context.Tratamientos.AnyAsync(t => t.AutorId == id || t.AutorSuspensionId == id)
+            || await _context.Examenes.AnyAsync(e => e.AutorId == id)
+            || await _context.Notas.AnyAsync(n => n.AutorId == id);
+
+        var tieneMascotas = await _context.Mascotas.AnyAsync(m => m.DuenoId == id);
+
+        if (esAutor || tieneMascotas)
+        {
+            TempData["Error"] = "No se puede eliminar el usuario porque tiene mascotas o registros clínicos asociados.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        var usuario = await _context.Usuarios.FindAsync(id);
+        if (usuario is null)
+        {
+            return NotFound();
+        }
+
+        try
+        {
+            _context.Usuarios.Remove(usuario);
+            await _context.SaveChangesAsync();
+            TempData["Exito"] = "Usuario eliminado.";
+        }
+        catch (DbUpdateException)
+        {
+            TempData["Error"] = "No se puede eliminar el usuario porque tiene mascotas o registros clínicos asociados.";
+        }
+
+        return RedirectToAction(nameof(Index));
+    }
+
     private int ObtenerUsuarioActualId()
     {
         var valor = User.FindFirstValue(ClaimTypes.NameIdentifier);

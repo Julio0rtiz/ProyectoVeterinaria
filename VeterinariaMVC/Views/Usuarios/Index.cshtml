@@ -144,6 +144,19 @@ else
 
                                 @if (!esUsuarioActual)
                                 {
+                                    var confirmacion = item.Bloqueado ? $"¿Desbloquear al usuario {item.Nombre}"
+                                    : $"¿Bloquear al usuario {item.Nombre}? No podra iniciar sesion hasta ser desbloqueado";
+
+                                    <form asp-action="CambiarBloqueo" asp-route-id="@item.Id" method="post" class="d-inline"
+                                          onsubmit="return confirm('@confirmacion');">
+                                        <button type="submit"
+                                                class="btn btn-sm @(item.Bloqueado ? "btn-outline-success" : "btn-outline-warning")"
+                                                title="@(item.Bloqueado ? "Desbloquear" : "Bloquear")"
+                                                aria-label="@(item.Bloqueado ? "Desbloquear" : "Bloquear") @item.Nombre">
+                                            <i class="bi @(item.Bloqueado ? "bi-unlock" : "bi-lock")" aria-hidden="true"></i>
+                                        </button>
+                                    </form>
+
                                     <form asp-action="Eliminar" asp-route-id="@item.Id" method="post" class="d-inline"
                                           onsubmit="return confirm('¿Eliminar este usuario?');">
                                         <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar"

@@ -239,6 +239,30 @@ public class UsuariosController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CambiarBloqueo(int id)
+    {
+        if (id == ObtenerUsuarioActualId())
+        {
+            TempData["Error"] = "No puede bloquear su propia cuenta";
+            return RedirectToAction(nameof(Index));
+        }
+
+        var usuario = await _context.Usuarios.FindAsync(id);
+        if (usuario is null)
+        {
+            return NotFound();
+        }
+
+        usuario.Bloqueado = !usuario.Bloqueado;
+        await _context.SaveChangesAsync();
+
+        TempData["Exito"] = usuario.Bloqueado ? $"Usuario {usuario.Nombre} bloqueado" : $"Usuario {usuario.Nombre} desbloqueado";
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Eliminar(int id)
     {
         if (id == ObtenerUsuarioActualId())

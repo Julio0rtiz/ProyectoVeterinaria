@@ -1,0 +1,127 @@
+@model IEnumerable<VeterinariaMVC.Models.Mascota>
+@using VeterinariaMVC.Models
+@{
+    ViewData["Title"] = "Mascotas";
+    var q = ViewBag.Q as string;
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+    <div>
+        <h1 class="h2 mb-1">Mascotas</h1>
+        <p class="text-secondary mb-0">Registro de mascotas pacientes y vinculación con sus dueños.</p>
+    </div>
+    <div>
+        <a class="btn btn-primary" asp-action="Crear">
+            <i class="bi bi-plus-lg" aria-hidden="true"></i> Registrar mascota
+        </a>
+    </div>
+</div>
+
+<form method="get" class="card p-3 mb-4">
+    <div class="row g-2 align-items-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <label for="q" class="visually-hidden">Buscar mascota</label>
+            <div class="input-group">
+                <span class="input-group-text bg-white"><i class="bi bi-search" aria-hidden="true"></i></span>
+                <input type="text" id="q" name="q" value="@q" class="form-control"
+                       placeholder="Buscar por nombre de mascota o cédula del dueño..." />
+            </div>
+        </div>
+        <div class="col-auto d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Buscar</button>
+            @if (!string.IsNullOrWhiteSpace(q))
+            {
+                <a asp-action="Index" class="btn btn-outline-secondary">Limpiar</a>
+            }
+        </div>
+    </div>
+</form>
+
+@if (!Model.Any())
+{
+    <div class="card p-4 text-center">
+        @if (!string.IsNullOrWhiteSpace(q))
+        {
+            <p class="mb-2">No se encontraron mascotas que coincidan con «@q».</p>
+            <div>
+                <a asp-action="Index" class="btn btn-outline-primary btn-sm">Ver todas las mascotas</a>
+            </div>
+        }
+        else
+        {
+            <p class="mb-3">No hay mascotas registradas. Agregue la primera.</p>
+            <div>
+                <a asp-action="Crear" class="btn btn-primary">
+                    <i class="bi bi-plus-lg" aria-hidden="true"></i> Registrar mascota
+                </a>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th style="width: 4rem;">Foto</th>
+                        <th>Nombre</th>
+                        <th>Especie y raza</th>
+                        <th>Sexo</th>
+                        <th>Nacimiento</th>
+                        <th>Dueño</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @if (!string.IsNullOrWhiteSpace(item.FotoRuta))
+                                {
+                                    <img src="~/@item.FotoRuta" alt="Foto de @item.Nombre"
+                                         class="rounded-circle object-fit-cover border" width="44" height="44" />
+                                }
+                                else
+                                {
+                                    <div class="rounded-circle bg-light border d-inline-flex align-items-center justify-content-center text-secondary"
+                                         style="width: 44px; height: 44px;" aria-hidden="true">
+                                        <i class="bi bi-heart-fill"></i>
+                                    </div>
+                                }
+                            </td>
+                            <td class="fw-bold">@item.Nombre</td>
+                            <td>
+                                <div>@item.Especie?.Nombre</div>
+                                <div class="small text-secondary">@item.Raza?.Nombre</div>
+                            </td>
+                            <td>
+                                @if (item.Sexo == Sexo.Macho)
+                                {
+                                    <span class="badge text-bg-light border">Macho</span>
+                                }
+                                else
+                                {
+                                    <span class="badge text-bg-light border">Hembra</span>
+                                }
+                            </td>
+                            <td>@item.FechaNacimiento.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                <div class="fw-bold">@item.Dueno?.Nombre</div>
+                                <div class="small text-secondary">Céd. @item.Dueno?.Cedula</div>
+                            </td>
+                            <td class="text-end text-nowrap">
+                                <a class="btn btn-sm btn-outline-secondary" asp-action="Editar" asp-route-id="@item.Id"
+                                   title="Editar" aria-label="Editar @item.Nombre">
+                                    <i class="bi bi-pencil" aria-hidden="true"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

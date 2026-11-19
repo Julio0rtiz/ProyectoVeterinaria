@@ -1,0 +1,91 @@
+@model VeterinariaMVC.Models.ViewModels.UsuarioFormViewModel
+@using VeterinariaMVC.Models
+@{
+    ViewData["Title"] = "Nuevo usuario";
+}
+
+<div class="mb-4">
+    <h1 class="h2 mb-1">Nuevo usuario</h1>
+    <p class="text-secondary mb-0">Cree una cuenta de acceso y asigne su perfil en el sistema.</p>
+</div>
+
+<div class="card p-4" style="max-width: 38rem;">
+    <form asp-action="Crear" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="mb-3">
+            <label asp-for="Cedula" class="form-label"></label>
+            <input asp-for="Cedula" class="form-control" maxlength="20" autofocus />
+            <span asp-validation-for="Cedula" class="text-danger small"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Nombre" class="form-label"></label>
+            <input asp-for="Nombre" class="form-control" maxlength="100" />
+            <span asp-validation-for="Nombre" class="text-danger small"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Correo" class="form-label"></label>
+            <input asp-for="Correo" type="email" class="form-control" maxlength="150" />
+            <span asp-validation-for="Correo" class="text-danger small"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Contrasena" class="form-label"></label>
+            <input asp-for="Contrasena" type="password" class="form-control" maxlength="100"
+                   autocomplete="new-password" />
+            <span asp-validation-for="Contrasena" class="text-danger small"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Perfil" class="form-label"></label>
+            <select asp-for="Perfil" class="form-select">
+                <option value="0">Seleccione un perfil...</option>
+                <option value="@((int)Perfil.Administrador)">Administrador</option>
+                <option value="@((int)Perfil.Veterinario)">Veterinario</option>
+                <option value="@((int)Perfil.Dueno)">Dueño</option>
+            </select>
+            <span asp-validation-for="Perfil" class="text-danger small"></span>
+        </div>
+
+        <div class="mb-3 d-none" id="grupoVeterinario">
+            <label asp-for="VeterinarioId" class="form-label"></label>
+            <select asp-for="VeterinarioId" asp-items="ViewBag.Veterinarios" class="form-select">
+                <option value="">Seleccione un veterinario...</option>
+            </select>
+            <div class="form-text">Solo se muestran veterinarios sin usuario asignado.</div>
+            <span asp-validation-for="VeterinarioId" class="text-danger small"></span>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-check-lg" aria-hidden="true"></i> Guardar
+            </button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (function () {
+            const selectPerfil = document.getElementById('Perfil');
+            const grupoVeterinario = document.getElementById('grupoVeterinario');
+            const selectVeterinario = document.getElementById('VeterinarioId');
+            const perfilVeterinario = '@((int)Perfil.Veterinario)';
+
+            function actualizarVeterinario() {
+                const esVet = selectPerfil.value === perfilVeterinario;
+                grupoVeterinario.classList.toggle('d-none', !esVet);
+                if (!esVet) {
+                    selectVeterinario.value = '';
+                }
+            }
+
+            selectPerfil.addEventListener('change', actualizarVeterinario);
+            actualizarVeterinario();
+        })();
+    </script>
+}

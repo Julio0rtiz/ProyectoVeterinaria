@@ -127,7 +127,7 @@ public class CatalogoController : Controller
         existente.Descripcion = item.Descripcion;
         await _context.SaveChangesAsync();
 
-        TempData["Exito"] = "Ítem del catálogo actualizado.";
+        TempData["Exito"] = "Se guardaron correctamente los cambios en el catálogo.";
         return RedirectToAction(nameof(Index));
     }
 
@@ -152,7 +152,7 @@ public class CatalogoController : Controller
         {
             _context.Catalogo.Remove(item);
             await _context.SaveChangesAsync();
-            TempData["Exito"] = "Ítem eliminado del catálogo clínico.";
+            TempData["Exito"] = "Se ha eliminado correctamente del catálogo clínico.";
         }
         catch (DbUpdateException)
         {

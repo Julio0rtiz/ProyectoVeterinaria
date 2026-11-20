@@ -114,7 +114,7 @@ public class EspeciesController : Controller
 
         if (enUso)
         {
-            TempData["Error"] = "No se puede eliminar: la especie tiene razas o mascotas asociadas.";
+            TempData["Error"] = "No se puede eliminar porque la especie tiene razas o mascotas asociadas.";
             return RedirectToAction(nameof(Index));
         }
 
@@ -132,7 +132,7 @@ public class EspeciesController : Controller
         }
         catch (DbUpdateException)
         {
-            TempData["Error"] = "No se puede eliminar: la especie tiene razas o mascotas asociadas.";
+            TempData["Error"] = "No se puede eliminar porque la especie tiene razas o mascotas asociadas.";
         }
 
         return RedirectToAction(nameof(Index));

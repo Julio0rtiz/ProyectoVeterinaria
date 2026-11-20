@@ -92,4 +92,30 @@ public class AuthController : ControllerBase
 
         return (new JwtSecurityTokenHandler().WriteToken(token), expira);
     }
+
+    [HttpPost("registro")]
+    [AllowAnonymous]
+    public async Task<IActionResult> Registro(RegistroViewModel datos)
+    {
+        if (await _context.Usuarios.AnyAsync(u => u.Cedula == datos.Cedula || u.Correo == datos.Correo))
+        {
+            return Conflict(new { mensaje = "Ya existe una cuenta con esa cédula o correo." });
+        }
+
+        var usuario = new Usuario
+        {
+            Cedula = datos.Cedula.Trim(),
+            Nombre = datos.Nombre.Trim(),
+            Correo = datos.Correo.Trim().ToLower(),
+            Perfil = Perfil.Dueno
+        };
+
+        usuario.ContrasenaHash = _hasher.HashPassword(usuario, datos.Contrasena);
+        _context.Usuarios.Add(usuario);
+        await _context.SaveChangesAsync();
+
+        var (token, expira) = GenerarToken(usuario);
+        return StatusCode(StatusCodes.Status201Created,
+            new { token, expiraEn = expira, nombre = usuario.Nombre, perfil = usuario.Perfil.ToString() });
+    }
 }

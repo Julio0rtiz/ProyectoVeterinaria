@@ -24,7 +24,7 @@ class LogoClinica extends StatelessWidget {
       child: Icon(
         Icons.monitor_heart_outlined,
         size: tamano * 0.56,
-        color: Colors.white,
+        color: const Color(0xFFE5A947),
       ),
     );
   }

@@ -87,7 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 6),
                 const Text(
-                  'El expediente de cada paciente, con sus vacunas, tratamientos, exámenes y notas, en un solo lugar.',
+                  'El expediente de sus amigos peludos, con sus vacunas, tratamientos, exámenes y notas, en un solo lugar.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 13.5,
@@ -113,7 +113,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           const SizedBox(height: 4),
                           const Text(
-                            'Ingrese con el correo y la contraseña de su cuenta de la clínica.',
+                            'Ingrese con el correo y la contraseña de su cuenta de la veterinaria.',
                             style: TextStyle(
                               fontSize: 13,
                               color: Color(0xFF64748B),

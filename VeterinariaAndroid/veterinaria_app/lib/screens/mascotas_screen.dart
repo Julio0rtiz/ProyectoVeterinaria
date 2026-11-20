@@ -87,7 +87,11 @@ class _MascotasScreenState extends State<MascotasScreen> {
       appBar: AppBar(
         title: const Row(
           children: [
-            Icon(Icons.monitor_heart_outlined, size: 22),
+            Icon(
+              Icons.monitor_heart_outlined,
+              size: 22,
+              color: Color(0xFFE5A947),
+            ),
             SizedBox(width: 8),
             Text('Mis mascotas'),
           ],
@@ -139,7 +143,7 @@ class _MascotasScreenState extends State<MascotasScreen> {
                         Icon(
                           Icons.pets,
                           size: 52,
-                          color: Colors.teal.shade300,
+                          color: const Color(0xFFE5A947),
                         ),
                         const SizedBox(height: 16),
                         const Text(
@@ -238,13 +242,13 @@ class _FotoMascota extends StatelessWidget {
                 fit: BoxFit.cover,
                 errorBuilder: (_, __, ___) => const Icon(
                   Icons.pets,
-                  color: Color(0xFF0F766E),
+                  color: Color(0xFFE5A947),
                   size: 32,
                 ),
               )
             : const Icon(
                 Icons.pets,
-                color: Color(0xFF0F766E),
+                color: Color(0xFFE5A947),
                 size: 32,
               ),
       ),

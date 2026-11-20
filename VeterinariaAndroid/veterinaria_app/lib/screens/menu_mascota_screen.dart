@@ -37,13 +37,13 @@ class MenuMascotaScreen extends StatelessWidget {
                           errorBuilder: (_, __, ___) => const Icon(
                             Icons.pets,
                             size: 72,
-                            color: Color(0xFF0F766E),
+                            color: Color(0xFFE5A947),
                           ),
                         )
                       : const Icon(
                           Icons.pets,
                           size: 72,
-                          color: Color(0xFF0F766E),
+                          color: Color(0xFFE5A947),
                         ),
                 ),
                 Padding(

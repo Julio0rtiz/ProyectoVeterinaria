@@ -1,0 +1,148 @@
+@model VeterinariaMVC.Models.ViewModels.MascotaFormViewModel
+@using VeterinariaMVC.Models
+@{
+    ViewData["Title"] = "Editar mascota";
+}
+
+<div class="mb-4">
+    <h1 class="h2 mb-1">Editar mascota</h1>
+    <p class="text-secondary mb-0">Modifique los datos de la mascota, su fotografía o su dueño vinculado.</p>
+</div>
+
+<div class="card p-4" style="max-width: 44rem;">
+    <form id="formMascota" asp-action="Editar" method="post" enctype="multipart/form-data"
+          data-url-razas="@Url.Action("RazasPorEspecie")" data-url-buscar-dueno="@Url.Action("BuscarDueno")"
+          data-url-crear-dueno="@Url.Action("CrearDueno")">
+        <input type="hidden" asp-for="Id" />
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="mb-3">
+            <label asp-for="Nombre" class="form-label"></label>
+            <input asp-for="Nombre" class="form-control" maxlength="80" autofocus />
+            <span asp-validation-for="Nombre" class="text-danger small"></span>
+        </div>
+
+        <div class="row g-3 mb-3">
+            <div class="col-md-6">
+                <label asp-for="EspecieId" class="form-label"></label>
+                <select asp-for="EspecieId" asp-items="ViewBag.Especies" class="form-select">
+                    <option value="0">Seleccione una especie...</option>
+                </select>
+                <span asp-validation-for="EspecieId" class="text-danger small"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="RazaId" class="form-label"></label>
+                <select asp-for="RazaId" asp-items="ViewBag.Razas" class="form-select"
+                        disabled="@(Model.EspecieId <= 0)">
+                    <option value="0">Seleccione una raza...</option>
+                </select>
+                <span asp-validation-for="RazaId" class="text-danger small"></span>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+            <div class="col-md-6">
+                <label asp-for="FechaNacimiento" class="form-label"></label>
+                <input asp-for="FechaNacimiento" type="date" class="form-control"
+                       max="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                <span asp-validation-for="FechaNacimiento" class="text-danger small"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="Sexo" class="form-label"></label>
+                <select asp-for="Sexo" class="form-select">
+                    <option value="@((int)Sexo.Macho)">Macho</option>
+                    <option value="@((int)Sexo.Hembra)">Hembra</option>
+                </select>
+                <span asp-validation-for="Sexo" class="text-danger small"></span>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label d-block">Fotografía actual</label>
+            @if (!string.IsNullOrWhiteSpace(Model.FotoActual))
+            {
+                <img src="~/@Model.FotoActual" alt="Foto actual de @Model.Nombre"
+                     class="rounded-circle object-fit-cover border mb-2" width="72" height="72" />
+            }
+            else
+            {
+                <div class="rounded-circle bg-light border d-inline-flex align-items-center justify-content-center text-secondary mb-2"
+                     style="width: 72px; height: 72px;" aria-hidden="true">
+                    <i class="bi bi-heart-fill fs-3"></i>
+                </div>
+            }
+        </div>
+
+        <div class="mb-4">
+            <label asp-for="Foto" class="form-label">Nueva fotografía (opcional)</label>
+            <input asp-for="Foto" type="file" class="form-control" accept=".jpg,.jpeg,.png,image/jpeg,image/png" />
+            <div class="form-text">Si selecciona una imagen nueva, reemplazará la actual (JPG o PNG, máx. 5 MB).</div>
+            <span asp-validation-for="Foto" class="text-danger small"></span>
+        </div>
+
+        <div class="border-top pt-3 mb-4">
+            <label for="buscarCedulaDueno" class="form-label fw-bold">Dueño de la mascota</label>
+            <input type="hidden" asp-for="DuenoId" />
+            <div class="input-group mb-2">
+                <input type="text" id="buscarCedulaDueno" value="@Model.DuenoCedula" class="form-control"
+                       placeholder="Cédula del dueño..." maxlength="20" />
+                <button type="button" id="btnBuscarDueno" class="btn btn-outline-primary"><i class="bi bi-search"></i>
+                    Buscar</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
+                            data-bs-target="#modalCrearDueno"><i class="bi bi-person-plus"></i> Nuevo dueño</button>
+                </div>
+                <div id="duenoSeleccionado" class="alert alert-success py-2 px-3 mb-1 @(Model.DuenoId > 0 ? "" : "d-none")">
+                    <i class="bi bi-person-check-fill"></i> <strong id="textoDuenoNombre">@Model.DuenoNombre</strong>
+                    <span class="text-secondary small" id="textoDuenoCedula">@(string.IsNullOrWhiteSpace(Model.DuenoCedula) ? "" : $"(Céd. {Model.DuenoCedula})")</span>
+                    </div>
+                    <div id="duenoNoEncontrado" class="small text-secondary mb-1 d-none">
+                        No se encontró un dueño con esa cédula. Puede registrarlo con <strong>Nuevo dueño</strong>.
+                    </div>
+                    <span asp-validation-for="DuenoId" class="text-danger small"></span>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg"></i> Guardar cambios</button>
+                    <a asp-action="Index" class="btn btn-outline-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="modal fade" id="modalCrearDueno" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <form id="formCrearDueno" class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title h5">Registrar nuevo dueño</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="errorModalDueno" class="alert alert-danger py-2 px-3 d-none"></div>
+                        <div class="mb-3">
+                            <label class="form-label">Cédula</label>
+                            <input name="Cedula" class="form-control" maxlength="20" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nombre completo</label>
+                            <input name="Nombre" class="form-control" maxlength="100" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Correo electrónico</label>
+                            <input name="Correo" type="email" class="form-control" maxlength="150" required />
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Contraseña inicial</label>
+                            <input name="Contrasena" type="password" class="form-control" maxlength="100" required />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg"></i> Guardar dueño</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        @section Scripts {
+            <partial name="_ValidationScriptsPartial" />
+            <script src="~/js/mascota-form.js" asp-append-version="true"></script>
+        }

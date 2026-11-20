@@ -52,6 +52,89 @@ public class MascotasController : Controller
         return View(lista);
     }
 
+    public async Task<IActionResult> Crear()
+    {
+        await CargarListasFormularioAsync();
+        return View(new MascotaFormViewModel());
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Crear(MascotaFormViewModel mascotaViewModel)
+    {
+        mascotaViewModel.Nombre = (mascotaViewModel.Nombre ?? "").Trim();
+
+        if (!Enum.IsDefined(typeof(Sexo), mascotaViewModel.Sexo))
+        {
+            ModelState.AddModelError(nameof(mascotaViewModel.Sexo), "Seleccione el sexo de la mascota.");
+        }
+
+        if (mascotaViewModel.FechaNacimiento.Date > DateTime.Today)
+        {
+            ModelState.AddModelError(nameof(mascotaViewModel.FechaNacimiento), "La fecha de nacimiento no puede ser futura.");
+        }
+
+        if (mascotaViewModel.EspecieId > 0 && !await _context.Especies.AnyAsync(e => e.Id == mascotaViewModel.EspecieId))
+        {
+            ModelState.AddModelError(nameof(mascotaViewModel.EspecieId), "Seleccione una especie válida.");
+        }
+
+        if (mascotaViewModel.RazaId > 0 && !await _context.Razas.AnyAsync(r => r.Id == mascotaViewModel.RazaId && r.EspecieId == mascotaViewModel.EspecieId))
+        {
+            ModelState.AddModelError(nameof(mascotaViewModel.RazaId), "La raza seleccionada no pertenece a la especie indicada.");
+        }
+
+        var dueno = mascotaViewModel.DuenoId > 0
+            ? await _context.Usuarios.FirstOrDefaultAsync(u => u.Id == mascotaViewModel.DuenoId && u.Perfil == Perfil.Dueno)
+            : null;
+
+        if (dueno is null)
+        {
+            ModelState.AddModelError(nameof(mascotaViewModel.DuenoId), "Debe buscar y seleccionar un dueño válido o registrarlo.");
+        }
+        else
+        {
+            mascotaViewModel.DuenoCedula = dueno.Cedula;
+            mascotaViewModel.DuenoNombre = dueno.Nombre;
+        }
+
+        if (!ModelState.IsValid)
+        {
+            await CargarListasFormularioAsync(mascotaViewModel.EspecieId, mascotaViewModel.RazaId);
+            return View(mascotaViewModel);
+        }
+
+        var mascota = new Mascota
+        {
+            Nombre = mascotaViewModel.Nombre,
+            EspecieId = mascotaViewModel.EspecieId,
+            RazaId = mascotaViewModel.RazaId,
+            FechaNacimiento = mascotaViewModel.FechaNacimiento.Date,
+            Sexo = mascotaViewModel.Sexo,
+            DuenoId = mascotaViewModel.DuenoId
+        };
+
+        try
+        {
+            if (mascotaViewModel.Foto is not null)
+            {
+                mascota.FotoRuta = await _archivos.GuardarFotoAsync(mascotaViewModel.Foto, "mascotas");
+            }
+        }
+        catch (ArgumentException ex)
+        {
+            ModelState.AddModelError(nameof(mascotaViewModel.Foto), ex.Message);
+            await CargarListasFormularioAsync(mascotaViewModel.EspecieId, mascotaViewModel.RazaId);
+            return View(mascotaViewModel);
+        }
+
+        _context.Mascotas.Add(mascota);
+        await _context.SaveChangesAsync();
+
+        TempData["Exito"] = "Mascota registrada.";
+        return RedirectToAction(nameof(Index));
+    }
+
     [HttpGet]
     public async Task<IActionResult> RazasPorEspecie(int especieId)
     {

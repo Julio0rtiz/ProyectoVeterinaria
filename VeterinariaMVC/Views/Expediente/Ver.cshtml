@@ -1,0 +1,161 @@
+@model VeterinariaMVC.Models.ViewModels.ExpedienteViewModel
+@{
+    var mascota = Model.Mascota;
+    ViewData["Title"] = $"Expediente de {mascota.Nombre}";
+
+    var hoy = DateTime.Today;
+    var meses = (hoy.Year - mascota.FechaNacimiento.Year) * 12 + hoy.Month - mascota.FechaNacimiento.Month;
+    if (hoy.Day < mascota.FechaNacimiento.Day)
+    {
+        meses--;
+    }
+    var edad = meses < 1 ? "Menos de 1 mes"
+        : meses < 12 ? $"{meses} {(meses == 1 ? "mes" : "meses")}"
+        : $"{meses / 12} {(meses / 12 == 1 ? "año" : "años")}";
+
+    var pestanas = new List<(string Clave, string Titulo, string Icono, int Cantidad)>
+    {
+        ("vacunas", "Vacunas", "bi-shield-plus", Model.Vacunas.Count),
+        ("tratamientos", "Medicamentos y tratamientos", "bi-capsule", Model.Tratamientos.Count(t => !t.Suspendido)),
+        ("examenes", "Exámenes", "bi-file-earmark-medical", Model.Examenes.Count),
+        ("historial", "Historial clínico", "bi-journal-text", Model.Notas.Count)
+    };
+}
+
+<div class="mb-3">
+    <a asp-controller="Veterinaria" asp-action="Index" class="btn btn-sm btn-outline-secondary">
+        <i class="bi bi-arrow-left" aria-hidden="true"></i> Volver al listado
+    </a>
+</div>
+
+<div class="card p-3 p-md-4 mb-4">
+    <div class="row g-4 align-items-center">
+        <div class="col-auto">
+            @if (!string.IsNullOrWhiteSpace(mascota.FotoRuta))
+            {
+                <img src="~/@mascota.FotoRuta" alt="Foto de @mascota.Nombre"
+                     class="rounded-circle object-fit-cover border" width="112" height="112" />
+            }
+            else
+            {
+                <div class="rounded-circle bg-light border d-flex align-items-center justify-content-center text-secondary fs-1"
+                     style="width: 112px; height: 112px;" aria-hidden="true">
+                    <i class="bi bi-heart-fill"></i>
+                </div>
+            }
+        </div>
+        <div class="col">
+            <h1 class="h2 mb-1">@mascota.Nombre</h1>
+            <p class="text-secondary mb-2">
+                @mascota.Especie?.Nombre · @mascota.Raza?.Nombre · @mascota.Sexo · @edad
+                (nació el @mascota.FechaNacimiento.ToString("dd/MM/yyyy"))
+            </p>
+            <p class="mb-0 small">
+                <i class="bi bi-clock-history" aria-hidden="true"></i>
+                Última atención:
+                <strong>@(mascota.UltimaAtencion?.ToString("dd/MM/yyyy HH:mm") ?? "Sin atenciones")</strong>
+            </p>
+        </div>
+        <div class="col-12 col-lg-4">
+            <div class="border rounded p-3 bg-light">
+                <div class="small text-secondary mb-1"><i class="bi bi-person" aria-hidden="true"></i> Dueño</div>
+                <div class="fw-bold">@mascota.Dueno?.Nombre</div>
+                <div class="small">Céd. @mascota.Dueno?.Cedula</div>
+                <div class="small">@mascota.Dueno?.Correo</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ul class="nav nav-tabs" id="pestanasExpediente" role="tablist">
+    @foreach (var p in pestanas)
+    {
+        var activa = p.Clave == Model.Tab;
+        <li class="nav-item" role="presentation">
+            <button class="nav-link @(activa ? "active" : "")" id="tab-@p.Clave" type="button" role="tab"
+                    data-bs-toggle="tab" data-bs-target="#panel-@p.Clave" data-tab="@p.Clave"
+                    aria-controls="panel-@p.Clave" aria-selected="@(activa ? "true" : "false")">
+                <i class="bi @p.Icono" aria-hidden="true"></i> @p.Titulo
+                <span class="badge rounded-pill text-bg-light border ms-1">@p.Cantidad</span>
+            </button>
+        </li>
+    }
+</ul>
+
+<div class="tab-content card border-top-0 rounded-top-0 p-3 p-md-4">
+    <div class="tab-pane fade @(Model.Tab == "vacunas" ? "show active" : "")" id="panel-vacunas" role="tabpanel" aria-labelledby="tab-vacunas">
+        <partial name="_Vacunas" model="Model" />
+    </div>
+    <div class="tab-pane fade @(Model.Tab == "tratamientos" ? "show active" : "")" id="panel-tratamientos" role="tabpanel" aria-labelledby="tab-tratamientos">
+        <partial name="_Tratamientos" model="Model" />
+    </div>
+    <div class="tab-pane fade @(Model.Tab == "examenes" ? "show active" : "")" id="panel-examenes" role="tabpanel" aria-labelledby="tab-examenes">
+        <partial name="_Examenes" model="Model" />
+    </div>
+    <div class="tab-pane fade @(Model.Tab == "historial" ? "show active" : "")" id="panel-historial" role="tabpanel" aria-labelledby="tab-historial">
+        <partial name="_Historial" model="Model" />
+    </div>
+</div>
+
+<div class="modal fade" id="modalImagen" tabindex="-1" aria-labelledby="modalImagenTitulo" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title h5" id="modalImagenTitulo">Examen</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalImagenArchivo" src="" alt="" class="img-fluid rounded" />
+            </div>
+            <div class="modal-footer">
+                <a id="modalImagenEnlace" href="#" target="_blank" rel="noopener" class="btn btn-outline-primary">
+                    <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i> Abrir en pestaña nueva
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.js"></script>
+    <script>
+        const quill = new Quill('#editor', {
+            theme: 'snow',
+            placeholder: 'Escriba la nota clínica...',
+            modules: {
+                toolbar: [
+                    [{ header: [2, 3, false] }],
+                    ['bold', 'italic', 'underline'],
+                    [{ list: 'ordered' }, { list: 'bullet' }],
+                    ['clean']
+                ]
+            }
+        });
+
+        document.getElementById('formNota').addEventListener('submit', function () {
+            document.getElementById('contenidoHtml').value = quill.getSemanticHTML().replaceAll('&nbsp;', ' ');
+        });
+
+        document.querySelectorAll('#pestanasExpediente [data-tab]').forEach(function (boton) {
+            boton.addEventListener('shown.bs.tab', function () {
+                const url = new URL(window.location);
+                url.searchParams.set('tab', boton.dataset.tab);
+                history.replaceState(null, '', url);
+            });
+        });
+
+        document.getElementById('modalImagen').addEventListener('show.bs.modal', function (evento) {
+            const origen = evento.relatedTarget;
+            document.getElementById('modalImagenTitulo').textContent = origen.dataset.titulo;
+            document.getElementById('modalImagenArchivo').src = origen.dataset.url;
+            document.getElementById('modalImagenArchivo').alt = origen.dataset.titulo;
+            document.getElementById('modalImagenEnlace').href = origen.dataset.url;
+        });
+
+        document.getElementById('archivoExamen').addEventListener('change', function () {
+            const archivo = this.files[0];
+            this.setCustomValidity(archivo && archivo.size > 10 * 1024 * 1024 ? 'El archivo no puede superar 10 MB.' : '');
+            this.reportValidity();
+        });
+    </script>
+}

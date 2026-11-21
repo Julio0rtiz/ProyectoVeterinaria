@@ -1,0 +1,16 @@
+@model object
+@{
+    var autor = Model as VeterinariaMVC.Models.Usuario;
+}
+@if (autor is null)
+{
+    <span class="text-secondary">Sin autor</span>
+}
+else if (autor.Veterinario is not null)
+{
+    <span>@autor.Veterinario.NombreCompleto, @autor.Veterinario.NumeroColegiado</span>
+}
+else
+{
+    <span>@autor.Nombre</span>
+}

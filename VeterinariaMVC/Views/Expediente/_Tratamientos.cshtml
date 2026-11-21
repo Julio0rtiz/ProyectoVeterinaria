@@ -1,0 +1,131 @@
+@model VeterinariaMVC.Models.ViewModels.ExpedienteViewModel
+@{
+    var vigentes = Model.Tratamientos.Where(t => !t.Suspendido).ToList();
+    var suspendidos = Model.Tratamientos.Where(t => t.Suspendido).OrderByDescending(t => t.FechaSuspension).ToList();
+    var grupos = Model.Catalogo.GroupBy(c => c.Tipo);
+}
+
+<h2 class="h5 mb-3">Agregar medicamento o tratamiento</h2>
+@if (!Model.Catalogo.Any())
+{
+    <p class="text-secondary">El catálogo clínico está vacío. Un administrador debe agregar medicamentos o tratamientos.</p>
+}
+else
+{
+    <form asp-action="AgregarTratamiento" method="post" class="row g-3 align-items-end mb-4">
+        <input type="hidden" name="mascotaId" value="@Model.Mascota.Id" />
+        <div class="col-12 col-md-4">
+            <label for="tratamientoItem" class="form-label">Medicamento o tratamiento</label>
+            <select id="tratamientoItem" name="ItemCatalogoId" class="form-select" required>
+                <option value="">Seleccione...</option>
+                @foreach (var grupo in grupos)
+                {
+                    <optgroup label="@(grupo.Key == TipoItemCatalogo.Medicamento ? "Medicamentos" : "Tratamientos")">
+                        @foreach (var item in grupo)
+                        {
+                            <option value="@item.Id">@item.Nombre</option>
+                        }
+                    </optgroup>
+                }
+            </select>
+        </div>
+        <div class="col-12 col-md-4">
+            <label for="tratamientoIndicaciones" class="form-label">Indicaciones</label>
+            <input type="text" id="tratamientoIndicaciones" name="Indicaciones" class="form-control" maxlength="500" required
+                   placeholder="Ej.: 1 tableta cada 12 horas por 7 días" />
+        </div>
+        <div class="col-6 col-md-2">
+            <label for="tratamientoInicio" class="form-label">Fecha de inicio</label>
+            <input type="date" id="tratamientoInicio" name="FechaInicio" class="form-control" required
+                   value="@DateTime.Today.ToString("yyyy-MM-dd")" />
+        </div>
+        <div class="col-6 col-md-2 d-grid">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-plus-lg" aria-hidden="true"></i> Agregar
+            </button>
+        </div>
+    </form>
+}
+
+<h3 class="h6 text-uppercase text-secondary mb-2">Vigentes (@vigentes.Count)</h3>
+@if (!vigentes.Any())
+{
+    <p class="text-secondary">No hay medicamentos ni tratamientos vigentes.</p>
+}
+else
+{
+    <div class="table-responsive mb-4">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Medicamento o tratamiento</th>
+                    <th>Indicaciones</th>
+                    <th>Inicio</th>
+                    <th>Asignado por</th>
+                    <th class="text-end">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var t in vigentes)
+                {
+                    <tr>
+                        <td>
+                            <div class="fw-bold">@t.ItemCatalogo?.Nombre</div>
+                            <div class="small text-secondary">@t.ItemCatalogo?.Tipo</div>
+                        </td>
+                        <td>@t.Indicaciones</td>
+                        <td>@t.FechaInicio.ToString("dd/MM/yyyy")</td>
+                        <td><partial name="_Autor" model="t.Autor" /></td>
+                        <td class="text-end">
+                            <form asp-action="SuspenderTratamiento" asp-route-id="@t.Id" method="post" class="d-inline"
+                                  onsubmit="return confirm('¿Suspender este medicamento o tratamiento?')">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" aria-label="Suspender @t.ItemCatalogo?.Nombre">
+                                    <i class="bi bi-pause-circle" aria-hidden="true"></i> Suspender
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<h3 class="h6 text-uppercase text-secondary mb-2">Suspendidos (@suspendidos.Count)</h3>
+@if (!suspendidos.Any())
+{
+    <p class="text-secondary mb-0">No hay medicamentos ni tratamientos suspendidos.</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0 text-secondary">
+            <thead>
+                <tr>
+                    <th>Medicamento o tratamiento</th>
+                    <th>Indicaciones</th>
+                    <th>Inicio</th>
+                    <th>Asignado por</th>
+                    <th>Suspendido</th>
+                    <th>Suspendido por</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var t in suspendidos)
+                {
+                    <tr>
+                        <td>
+                            <div class="fw-bold">@t.ItemCatalogo?.Nombre</div>
+                            <div class="small">@t.ItemCatalogo?.Tipo</div>
+                        </td>
+                        <td>@t.Indicaciones</td>
+                        <td>@t.FechaInicio.ToString("dd/MM/yyyy")</td>
+                        <td><partial name="_Autor" model="t.Autor" /></td>
+                        <td>@t.FechaSuspension?.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td><partial name="_Autor" model="t.AutorSuspension" /></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

@@ -1,0 +1,85 @@
+@model VeterinariaMVC.Models.ViewModels.ExpedienteViewModel
+@{
+    var hoy = DateTime.Today;
+    var limite = hoy.AddDays(30);
+}
+
+<h2 class="h5 mb-3">Registrar vacuna</h2>
+<form asp-action="AgregarVacuna" method="post" class="row g-3 align-items-end mb-4">
+    <input type="hidden" name="mascotaId" value="@Model.Mascota.Id" />
+    <div class="col-12 col-md-4">
+        <label for="vacunaNombre" class="form-label">Vacuna</label>
+        <input type="text" id="vacunaNombre" name="Nombre" class="form-control" maxlength="100" required
+               placeholder="Ej.: Antirrábica" />
+    </div>
+    <div class="col-6 col-md-3">
+        <label for="vacunaAplicacion" class="form-label">Fecha de aplicación</label>
+        <input type="date" id="vacunaAplicacion" name="FechaAplicacion" class="form-control" required
+               max="@hoy.ToString("yyyy-MM-dd")" value="@hoy.ToString("yyyy-MM-dd")" />
+    </div>
+    <div class="col-6 col-md-3">
+        <label for="vacunaProxima" class="form-label">Próxima dosis</label>
+        <input type="date" id="vacunaProxima" name="FechaProximaDosis" class="form-control" required />
+    </div>
+    <div class="col-12 col-md-2 d-grid">
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-plus-lg" aria-hidden="true"></i> Registrar
+        </button>
+    </div>
+</form>
+
+<div class="d-flex flex-wrap gap-3 small mb-2">
+    <span><span class="badge text-bg-danger">Vencida</span> próxima dosis anterior a hoy</span>
+    <span><span class="badge text-bg-warning">Vence pronto</span> en los próximos 30 días</span>
+</div>
+
+@if (!Model.Vacunas.Any())
+{
+    <p class="text-secondary mb-0">Esta mascota no tiene vacunas registradas.</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Vacuna</th>
+                    <th>Aplicada</th>
+                    <th>Próxima dosis</th>
+                    <th>Estado</th>
+                    <th>Aplicada por</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var v in Model.Vacunas)
+                {
+                    var vencida = v.FechaProximaDosis.Date < hoy;
+                    var pronto = !vencida && v.FechaProximaDosis.Date <= limite;
+                    <tr class="@(vencida ? "table-danger" : pronto ? "table-warning" : "")">
+                        <td class="fw-bold">@v.Nombre</td>
+                        <td>@v.FechaAplicacion.ToString("dd/MM/yyyy")</td>
+                        <td>@v.FechaProximaDosis.ToString("dd/MM/yyyy")</td>
+                        <td>
+                            @if (vencida)
+                            {
+                                <span class="badge text-bg-danger">Vencida</span>
+                            }
+                            else if (pronto)
+                            {
+                                <span class="badge text-bg-warning">Vence pronto</span>
+                            }
+                            else
+                            {
+                                <span class="badge text-bg-success">Vigente</span>
+                            }
+                        </td>
+                        <td>
+                            <partial name="_Autor" model="v.Autor" />
+                            <div class="small text-secondary">@v.FechaRegistro.ToString("dd/MM/yyyy HH:mm")</div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

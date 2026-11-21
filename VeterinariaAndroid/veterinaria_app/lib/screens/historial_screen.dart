@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:intl/intl.dart';
 import '../models/historial.dart';
 import '../models/mascota.dart';
@@ -108,7 +108,7 @@ class _HistorialScreenState extends State<HistorialScreen> {
       child: ListView.separated(
         padding: const EdgeInsets.all(16),
         itemCount: lista.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 12),
+        separatorBuilder: (_, _) => const SizedBox(height: 12),
         itemBuilder: (context, index) {
           final nota = lista[index];
           return Card(

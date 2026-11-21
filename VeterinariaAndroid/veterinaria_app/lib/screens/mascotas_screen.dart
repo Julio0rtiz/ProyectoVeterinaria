@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import '../models/mascota.dart';
 import '../services/api_client.dart';
 import '../services/auth_service.dart';
@@ -164,7 +164,7 @@ class _MascotasScreenState extends State<MascotasScreen> {
               physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.all(16),
               itemCount: lista.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              separatorBuilder: (_, _) => const SizedBox(height: 12),
               itemBuilder: (context, index) {
                 final mascota = lista[index];
                 return Card(
@@ -240,7 +240,7 @@ class _FotoMascota extends StatelessWidget {
             ? Image.network(
                 url!,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => const Icon(
+                errorBuilder: (_, _, _) => const Icon(
                   Icons.pets,
                   color: Color(0xFFE5A947),
                   size: 32,

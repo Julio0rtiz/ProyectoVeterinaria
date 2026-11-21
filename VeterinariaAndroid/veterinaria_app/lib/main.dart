@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'screens/login_screen.dart';
 import 'screens/mascotas_screen.dart';
 import 'services/auth_service.dart';

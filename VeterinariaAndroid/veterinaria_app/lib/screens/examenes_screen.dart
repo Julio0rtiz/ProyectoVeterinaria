@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:intl/intl.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
@@ -151,7 +151,7 @@ class _ExamenesScreenState extends State<ExamenesScreen> {
       child: ListView.separated(
         padding: const EdgeInsets.all(16),
         itemCount: lista.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 12),
+        separatorBuilder: (_, _) => const SizedBox(height: 12),
         itemBuilder: (context, index) {
           final ex = lista[index];
           final esPdf = ex.tipoContenido.toLowerCase().contains('pdf');

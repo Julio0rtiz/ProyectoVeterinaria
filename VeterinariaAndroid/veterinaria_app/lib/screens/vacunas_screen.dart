@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:intl/intl.dart';
 import 'package:veterinaria_app/widgets/error_view.dart';
 import '../models/mascota.dart';
@@ -6,7 +6,6 @@ import '../models/vacuna.dart';
 import '../services/api_client.dart';
 import '../services/auth_service.dart';
 import '../services/veterinaria_api.dart';
-import '../widgets/error_view.dart';
 import 'login_screen.dart';
 
 class VacunasScreen extends StatefulWidget {
@@ -110,7 +109,7 @@ class _VacunasScreenState extends State<VacunasScreen> {
       child: ListView.separated(
         padding: const EdgeInsets.all(16),
         itemCount: lista.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 12),
+        separatorBuilder: (_, _) => const SizedBox(height: 12),
         itemBuilder: (context, index) {
           final v = lista[index];
           final diasRestantes = v.fechaProximaDosis.difference(hoy).inDays;

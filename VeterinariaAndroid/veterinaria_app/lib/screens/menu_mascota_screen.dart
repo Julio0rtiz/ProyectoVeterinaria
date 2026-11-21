@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:intl/intl.dart';
 import '../models/mascota.dart';
 import 'examenes_screen.dart';
@@ -34,7 +34,7 @@ class MenuMascotaScreen extends StatelessWidget {
                       ? Image.network(
                           mascota.fotoUrl!,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => const Icon(
+                          errorBuilder: (_, _, _) => const Icon(
                             Icons.pets,
                             size: 72,
                             color: Color(0xFFE5A947),

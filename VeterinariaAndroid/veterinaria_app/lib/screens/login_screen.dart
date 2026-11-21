@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import '../services/api_client.dart';
 import '../services/auth_service.dart';
 import '../widgets/logo_clinica.dart';

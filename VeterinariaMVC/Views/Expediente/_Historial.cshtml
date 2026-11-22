@@ -1,0 +1,33 @@
+@model VeterinariaMVC.Models.ViewModels.ExpedienteViewModel
+
+<link href="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.snow.css" rel="stylesheet" />
+
+<h2 class="h5 mb-3">Nueva nota clínica</h2>
+<form asp-action="AgregarNota" method="post" id="formNota" class="mb-4">
+    <input type="hidden" name="mascotaId" value="@Model.Mascota.Id" />
+    <input type="hidden" id="contenidoHtml" name="contenidoHtml" />
+    <div id="editor" style="height: 180px;" class="mb-2 bg-white"></div>
+    <button type="submit" class="btn btn-primary">
+        <i class="bi bi-journal-plus" aria-hidden="true"></i> Guardar nota
+    </button>
+</form>
+
+@if (!Model.Notas.Any())
+{
+    <p class="text-secondary mb-0">El historial clínico de esta mascota está vacío.</p>
+}
+else
+{
+    <div class="d-flex flex-column gap-3">
+        @foreach (var n in Model.Notas)
+        {
+            <article class="border rounded p-3">
+                <header class="d-flex flex-wrap justify-content-between gap-2 small text-secondary border-bottom pb-2 mb-2">
+                    <span><i class="bi bi-calendar-event" aria-hidden="true"></i> @n.FechaHora.ToString("dd/MM/yyyy HH:mm")</span>
+                    <span><i class="bi bi-person-badge" aria-hidden="true"></i> <partial name="_Autor" model="n.Autor" /></span>
+                </header>
+                <div class="nota-contenido">@Html.Raw(n.ContenidoHtml)</div>
+            </article>
+        }
+    </div>
+}

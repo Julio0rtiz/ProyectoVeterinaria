@@ -1,0 +1,78 @@
+@model VeterinariaMVC.Models.ViewModels.ExpedienteViewModel
+
+<h2 class="h5 mb-3">Subir examen</h2>
+<form asp-action="AgregarExamen" method="post" enctype="multipart/form-data" class="row g-3 align-items-end mb-4">
+    <input type="hidden" name="mascotaId" value="@Model.Mascota.Id" />
+    <div class="col-12 col-md-5">
+        <label for="examenDescripcion" class="form-label">Descripción</label>
+        <input type="text" id="examenDescripcion" name="Descripcion" class="form-control" maxlength="200" required
+               placeholder="Ej.: Hemograma completo" />
+    </div>
+    <div class="col-12 col-md-5">
+        <label for="archivoExamen" class="form-label">Archivo (JPG, PNG o PDF, máximo 10 MB)</label>
+        <input type="file" id="archivoExamen" name="Archivo" class="form-control" accept=".jpg,.jpeg,.png,.pdf" required />
+    </div>
+    <div class="col-12 col-md-2 d-grid">
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-upload" aria-hidden="true"></i> Subir
+        </button>
+    </div>
+</form>
+
+@if (!Model.Examenes.Any())
+{
+    <p class="text-secondary mb-0">Esta mascota no tiene exámenes registrados.</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th style="width: 3rem;">Tipo</th>
+                    <th>Descripción</th>
+                    <th>Fecha</th>
+                    <th>Registrado por</th>
+                    <th class="text-end">Archivo</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var e in Model.Examenes)
+                {
+                    var esImagen = e.TipoContenido.StartsWith("image/");
+                    var url = Url.Action("Archivo", "Expediente", new { id = e.Id });
+                    <tr>
+                        <td class="fs-4">
+                            @if (esImagen)
+                            {
+                                <i class="bi bi-file-earmark-image text-primary" title="Imagen" aria-label="Imagen"></i>
+                            }
+                            else
+                            {
+                                <i class="bi bi-file-earmark-pdf text-danger" title="PDF" aria-label="PDF"></i>
+                            }
+                        </td>
+                        <td>
+                            <div class="fw-bold">@e.Descripcion</div>
+                            <div class="small text-secondary">@e.NombreOriginal</div>
+                        </td>
+                        <td>@e.FechaRegistro.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td><partial name="_Autor" model="e.Autor" /></td>
+                        <td class="text-end text-nowrap">
+                            @if (esImagen)
+                            {
+                                <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalImagen"
+                                        data-url="@url" data-titulo="@e.Descripcion" aria-label="Ver @e.Descripcion">
+                                    <i class="bi bi-eye" aria-hidden="true"></i> Ver
+                                </button>
+                            }
+                            <a href="@url" target="_blank" rel="noopener" class="btn btn-sm btn-outline-secondary" aria-label="Abrir @e.Descripcion en pestaña nueva">
+                                <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i> @(esImagen ? "Abrir" : "Ver / descargar")
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

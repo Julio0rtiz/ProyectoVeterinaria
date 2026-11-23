@@ -98,11 +98,6 @@ class _MascotasScreenState extends State<MascotasScreen> {
         ),
         actions: [
           IconButton(
-            tooltip: 'Recargar',
-            icon: const Icon(Icons.refresh),
-            onPressed: _cargando ? null : _cargarMascotas,
-          ),
-          IconButton(
             tooltip: 'Cerrar sesión',
             icon: const Icon(Icons.logout),
             onPressed: _cerrarSesion,

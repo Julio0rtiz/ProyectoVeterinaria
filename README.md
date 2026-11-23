@@ -45,4 +45,4 @@ flutter run
 ```
 
 ### Base de datos
-La aplicacion cuenta con una base de datos de SQL Server 2022 alojada en Somee correctamente, si se desea realizar pruebas locales en `Base/` se encuentra un `.bak` con los datos precargados de la web.
+La aplicacion cuenta con una base de datos de SQL Server 2022 alojada en Somee correctamente, si se desea realizar pruebas locales en `Base/` se encuentra el archivo `VeterinariaDB.bak` con los datos precargados de la web.

@@ -110,6 +110,9 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+// MapStaticAssets solo sirve los archivos que existían al compilar.
+// UseStaticFiles sirve los que se suben en tiempo de ejecución (wwwroot/uploads).
+app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthentication();

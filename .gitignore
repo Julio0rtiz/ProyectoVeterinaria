@@ -19,10 +19,6 @@ publish/
 .DS_Store
 Thumbs.db
 
-VeterinariaMVC/App_Data/
-
-
-
 # Created by https://gitignore.org
 # Flutter.gitignore
 

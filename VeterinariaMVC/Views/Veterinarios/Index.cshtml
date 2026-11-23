@@ -94,16 +94,7 @@ else
                             <td>
                                 <span class="badge text-bg-light border">@item.NumeroColegiado</span>
                             </td>
-                            <td>
-                                @if (vinculados.Contains(item.Id))
-                                {
-                                    <span class="badge text-bg-success">Vinculado</span>
-                                }
-                                else
-                                {
-                                    <span class="badge text-bg-secondary">Sin usuario</span>
-                                }
-                            </td>
+                            <td> @(vinculados.Contains(item.Id) ? "Vinculado" : "Sin usuario") </td>
                             <td class="text-end text-nowrap">
                                 <a class="btn btn-sm btn-outline-secondary" asp-action="Editar" asp-route-id="@item.Id"
                                    title="Editar" aria-label="Editar @item.NombreCompleto">

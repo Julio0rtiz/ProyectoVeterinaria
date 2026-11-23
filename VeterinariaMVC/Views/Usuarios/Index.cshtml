@@ -112,32 +112,10 @@ else
                                 }
                             </td>
                             <td>@item.Correo</td>
-                            <td>
-                                @switch (item.Perfil)
-                                {
-                                    case Perfil.Administrador:
-                                        <span class="badge text-bg-dark">Administrador</span>
-                                        break;
-                                    case Perfil.Veterinario:
-                                        <span class="badge text-bg-primary">Veterinario</span>
-                                        break;
-                                    case Perfil.Dueno:
-                                        <span class="badge text-bg-info text-dark">Dueño</span>
-                                        break;
-                                }
-                            </td>
-                            <td>
-                                @if (item.Bloqueado)
-                                {
-                                    <span class="badge text-bg-danger">Bloqueado</span>
-                                }
-                                else
-                                {
-                                    <span class="badge text-bg-success">Activo</span>
-                                }
-                            </td>
+                            <td> @(item.Perfil == Perfil.Dueno ? "Dueño" : item.Perfil.ToString()) </td>
+                            <td> @(item.Bloqueado ? "Bloqueado" : "Activo") </td>
                             <td class="text-end text-nowrap">
-                                <a class="btn btn-sm btn-outline-secondary" asp-action="Editar" asp-route-id="@item.Id"
+                                <a class="btn btn-sm btn-outline-success" asp-action="Editar" asp-route-id="@item.Id"
                                    title="Editar" aria-label="Editar @item.Nombre">
                                     <i class="bi bi-pencil" aria-hidden="true"></i>
                                 </a>
@@ -150,7 +128,7 @@ else
                                     <form asp-action="CambiarBloqueo" asp-route-id="@item.Id" method="post" class="d-inline"
                                           onsubmit="return confirm('@confirmacion');">
                                         <button type="submit"
-                                                class="btn btn-sm @(item.Bloqueado ? "btn-outline-success" : "btn-outline-warning")"
+                                                class="btn btn-sm @(item.Bloqueado ? "btn-outline-dark" : "btn-outline-secondary")"
                                                 title="@(item.Bloqueado ? "Desbloquear" : "Bloquear")"
                                                 aria-label="@(item.Bloqueado ? "Desbloquear" : "Bloquear") @item.Nombre">
                                             <i class="bi @(item.Bloqueado ? "bi-unlock" : "bi-lock")" aria-hidden="true"></i>

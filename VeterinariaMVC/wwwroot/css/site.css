@@ -36,8 +36,18 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, h4, h5, h6,
-.h1, .h2, .h3, .h4, .h5, .h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: -0.01em;
@@ -329,7 +339,7 @@ h1, h2, h3, h4, h5, h6,
   font-size: 1.0625rem;
 }
 
-.inicio-seccion + .inicio-seccion {
+.inicio-seccion+.inicio-seccion {
   margin-top: 2.75rem;
 }
 
@@ -399,7 +409,7 @@ h1, h2, h3, h4, h5, h6,
   overflow: hidden;
 }
 
-.accesos-administracion li + li {
+.accesos-administracion li+li {
   border-top: 1px solid var(--borde);
 }
 
@@ -461,11 +471,11 @@ h1, h2, h3, h4, h5, h6,
   border-bottom: 2px solid var(--borde);
 }
 
-.card > .table-responsive:first-child .table thead th:first-child {
+.card>.table-responsive:first-child .table thead th:first-child {
   border-top-left-radius: 1rem;
 }
 
-.card > .table-responsive:first-child .table thead th:last-child {
+.card>.table-responsive:first-child .table thead th:last-child {
   border-top-right-radius: 1rem;
 }
 
@@ -528,7 +538,7 @@ h1, h2, h3, h4, h5, h6,
     grid-template-columns: 1fr 1fr;
   }
 
-  .accesos-administracion li + li {
+  .accesos-administracion li+li {
     border-top: 0;
   }
 
@@ -604,6 +614,7 @@ h1, h2, h3, h4, h5, h6,
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {

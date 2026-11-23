@@ -87,20 +87,7 @@
                             {
                                 <tr>
                                     <td class="fw-bold">@item.Nombre</td>
-                                    <td>
-                                        @if (item.Tipo == TipoItemCatalogo.Medicamento)
-                                        {
-                                            <span class="badge text-bg-primary">
-                                                <i class="bi bi-capsule" aria-hidden="true"></i> Medicamento
-                                            </span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge text-bg-warning text-dark">
-                                                <i class="bi bi-bandaid" aria-hidden="true"></i> Tratamiento
-                                            </span>
-                                        }
-                                    </td>
+                                    <td> @(item.Tipo == TipoItemCatalogo.Medicamento ? "Medicamento" : "Tratamiento") </td>
                                     <td class="text-secondary">@item.Descripcion</td>
                                     <td class="text-end text-nowrap">
                                         <a class="btn btn-sm btn-outline-secondary" asp-action="Editar" asp-route-id="@item.Id"

@@ -29,8 +29,8 @@
 </form>
 
 <div class="d-flex flex-wrap gap-3 small mb-2">
-    <span><span class="badge text-bg-danger">Vencida</span> próxima dosis anterior a hoy</span>
-    <span><span class="badge text-bg-warning">Vence pronto</span> en los próximos 30 días</span>
+    <span><span class="fw-semibold text-dark">Vencida</span> próxima dosis anterior a hoy</span>
+    <span><span class="fw-semibold text-dark">Vence pronto</span> en los próximos 30 días</span>
 </div>
 
 @if (!Model.Vacunas.Any())
@@ -55,22 +55,22 @@ else
                 {
                     var vencida = v.FechaProximaDosis.Date < hoy;
                     var pronto = !vencida && v.FechaProximaDosis.Date <= limite;
-                    <tr class="@(vencida ? "table-danger" : pronto ? "table-warning" : "")">
+                    <tr>
                         <td class="fw-bold">@v.Nombre</td>
                         <td>@v.FechaAplicacion.ToString("dd/MM/yyyy")</td>
                         <td>@v.FechaProximaDosis.ToString("dd/MM/yyyy")</td>
                         <td>
                             @if (vencida)
                             {
-                                <span class="badge text-bg-danger">Vencida</span>
+                                <span class="fw-semibold text-dark">Vencida</span>
                             }
                             else if (pronto)
                             {
-                                <span class="badge text-bg-warning">Vence pronto</span>
+                                <span class="fw-semibold text-dark">Vence pronto</span>
                             }
                             else
                             {
-                                <span class="badge text-bg-success">Vigente</span>
+                                <span class="fw-semibold text-dark">Vigente</span>
                             }
                         </td>
                         <td>

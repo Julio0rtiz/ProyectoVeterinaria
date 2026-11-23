@@ -13,6 +13,14 @@ Este proyecto se encuentra trabajado por los estudiantes:
 ## Despliegues
 Este proyecto se encuentra documentado en un [repositorio de Git](https://github.com/Julio0rtiz/ProyectoVeterinaria) y alojado en una [web de Somee](https://www.veterinaria.somee.com) desde la que es accesible la aplicación web y la API que consume la aplicación móvil.
 
+## Usuarios y contraseñas para el acceso
+Usuarios de prueba pre-cargados con sus correos y contraseñas:
+| Tipo de usuario | Correo | Contraseña |
+|:---:|:---:|:---:|
+| Administrador | admin@veterinaria.com | Admin123! |
+| Veterinaria | vet@veterinaria.com | Vet123! |
+| Dueño | dueno@veterinaria.com | Dueno123! |
+
 ## Inicio e Instalación
 
 ### Aplicación web
